@@ -8,10 +8,9 @@ import {
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { Platform } from 'react-native';
 
-let auth: Auth | null = null;
+let auth: Auth;
 let provider: GoogleAuthProvider | null = null;
-let db: Firestore | null = null;
-
+let db: Firestore;
 const firebaseConfig = {
   apiKey: 'AIzaSyBV2t1mZTFBOlYcMV5d0xstojiOesVblrQ',
   authDomain: 'cit-490-846c7.firebaseapp.com',
@@ -21,11 +20,9 @@ const firebaseConfig = {
   appId: '1:774298954456:web:84cc61cf5ff0ae7f7185ad',
 };
 
-if (Platform.OS === 'web') {
-  const app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  provider = new GoogleAuthProvider();
-  db = getFirestore(app);
-}
+const app = initializeApp(firebaseConfig);
+auth = getAuth(app);
+provider = new GoogleAuthProvider();
+db = getFirestore(app);
 
 export { auth, provider, db };

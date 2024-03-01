@@ -391,267 +391,261 @@ export default function BudgetPlanScreen() {
 
   return (
     <SafeAreaView style={[styles.container, styles.safeAreaView]}>
+      {/* <Pressable style={styles.container} onPress={() => handleScreenPress()}> */}
       <ScrollView>
-        <Pressable style={styles.container} onPress={() => handleScreenPress()}>
-          {/**Plan Information */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainerHeader}>
-              <Text style={styles.text}>Plan Information</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Plan Name</Text>
-              {planNameOnEdit != true ? (
-                <View style={[styles.row, styles.item]}>
-                  <Text style={styles.item}>{planName}</Text>
-                  <Feather
-                    name="edit"
-                    size={24}
-                    color="black"
-                    onPress={() => {
-                      setEditedPlanName(planName);
-                      setPlanNameOnEdit(true);
-                    }}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={[styles.row, styles.item, styles.itemInputContainer]}
-                >
-                  <TextInput
-                    style={[styles.item, styles.itemInput]}
-                    value={editedPlanName}
-                    placeholder="Set Plan Name"
-                    onChangeText={value => setEditedPlanName(value)}
-                  />
-                  <AntDesign
-                    name="checkcircle"
-                    size={24}
-                    color="green"
-                    onPress={handleSavePlanName}
-                  />
-                </View>
-              )}
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Description</Text>
-              {descriptionOnEdit != true ? (
-                <View style={[styles.row, styles.item]}>
-                  <Text style={styles.item}>{description}</Text>
-                  <Feather
-                    name="edit"
-                    size={24}
-                    color="black"
-                    onPress={() => {
-                      setEditedDesc(description);
-                      setDescriptionOnEdit(true);
-                    }}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={[styles.row, styles.item, styles.itemInputContainer]}
-                >
-                  <TextInput
-                    style={[styles.item, styles.itemInput]}
-                    value={editedDesc}
-                    placeholder="Set Description"
-                    onChangeText={value => setEditedDesc(value)}
-                  />
-                  <AntDesign
-                    name="checkcircle"
-                    size={24}
-                    color="green"
-                    onPress={handleSaveDesc}
-                  />
-                </View>
-              )}
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Initial Budget</Text>
-              {ibOnEdit != true ? (
-                <View style={[styles.row, styles.item]}>
-                  <Text style={styles.item}>{initialBudget}</Text>
-                  <Feather
-                    name="edit"
-                    size={24}
-                    color="black"
-                    onPress={() => {
-                      setEditedIb(initialBudget);
-                      setIbOnedit(true);
-                    }}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={[styles.row, styles.item, styles.itemInputContainer]}
-                >
-                  <TextInput
-                    style={[styles.item, styles.itemInput]}
-                    value={editedIb}
-                    placeholder="Set Initial Budget"
-                    keyboardType={'number-pad'}
-                    onChangeText={value => setEditedIb(value)}
-                  />
-                  <AntDesign
-                    name="checkcircle"
-                    size={24}
-                    color="green"
-                    onPress={() => {
-                      handleSaveIb();
-                    }}
-                  />
-                </View>
-              )}
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Target Date</Text>
+        {/**Plan Information */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainerHeader}>
+            <Text style={styles.text}>Plan Information</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Plan Name</Text>
+            {planNameOnEdit != true ? (
               <View style={[styles.row, styles.item]}>
-                <Text style={styles.item}>
-                  {dayjs(editedTargetDate).format('MMMM DD, YYYY')}
-                </Text>
-              </View>
-              <Feather
-                name="edit"
-                size={24}
-                color="black"
-                onPress={() => {
-                  setTargetDateOnEdit(!targetDateOnEdit);
-                  // setEditedTargetDate(dayjs(targetDate));
-                }}
-              />
-            </View>
-            {targetDateOnEdit && (
-              <DateTimePicker
-                value={editedTargetDate}
-                onValueChange={(date: any) => {
-                  handleSaveTargetDate(date);
-                  setTargetDateOnEdit(false);
-                }}
-                mode="date"
-              />
-            )}
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Overall Budget: {overAllBudget || 0}
-              </Text>
-            </View>
-          </View>
-
-          {/**Debts Information */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainerHeader}>
-              <Text style={styles.text}>Debts Information</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Total Debts: {totalDebts}</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Total Paid Debts: {totalPaidDebts}
-              </Text>
-            </View>
-            {totalPaidDebts > 0 ? (
-              <View style={styles.itemContainer}>
-                <Text style={styles.item}>
-                  Debts Remaining: {totalDebtsRemaining}
-                </Text>
+                <Text style={styles.item}>{planName}</Text>
+                <Feather
+                  name="edit"
+                  size={24}
+                  color="black"
+                  onPress={() => {
+                    setEditedPlanName(planName);
+                    setPlanNameOnEdit(true);
+                  }}
+                />
               </View>
             ) : (
-              ''
+              <View
+                style={[styles.row, styles.item, styles.itemInputContainer]}
+              >
+                <TextInput
+                  style={[styles.item, styles.itemInput]}
+                  value={editedPlanName}
+                  placeholder="Set Plan Name"
+                  onChangeText={value => setEditedPlanName(value)}
+                />
+                <AntDesign
+                  name="checkcircle"
+                  size={24}
+                  color="green"
+                  onPress={handleSavePlanName}
+                />
+              </View>
             )}
           </View>
-
-          {/**Bills Information */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainerHeader}>
-              <Text style={styles.text}>Bills Information</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Total Bills: {totalBills}</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Total Paid Bills: {totalPaidBills}
-              </Text>
-            </View>
-            {totalBills > 0 && totalPaidBills > 0 ? (
-              <View style={styles.itemContainer}>
-                <Text style={styles.item}>
-                  Remaining Bills: {totalRemainingBills}
-                </Text>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Description</Text>
+            {descriptionOnEdit != true ? (
+              <View style={[styles.row, styles.item]}>
+                <Text style={styles.item}>{description}</Text>
+                <Feather
+                  name="edit"
+                  size={24}
+                  color="black"
+                  onPress={() => {
+                    setEditedDesc(description);
+                    setDescriptionOnEdit(true);
+                  }}
+                />
               </View>
             ) : (
-              ''
+              <View
+                style={[styles.row, styles.item, styles.itemInputContainer]}
+              >
+                <TextInput
+                  style={[styles.item, styles.itemInput]}
+                  value={editedDesc}
+                  placeholder="Set Description"
+                  onChangeText={value => setEditedDesc(value)}
+                />
+                <AntDesign
+                  name="checkcircle"
+                  size={24}
+                  color="green"
+                  onPress={handleSaveDesc}
+                />
+              </View>
             )}
           </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Initial Budget</Text>
+            {ibOnEdit != true ? (
+              <View style={[styles.row, styles.item]}>
+                <Text style={styles.item}>{initialBudget}</Text>
+                <Feather
+                  name="edit"
+                  size={24}
+                  color="black"
+                  onPress={() => {
+                    setEditedIb(initialBudget);
+                    setIbOnedit(true);
+                  }}
+                />
+              </View>
+            ) : (
+              <View
+                style={[styles.row, styles.item, styles.itemInputContainer]}
+              >
+                <TextInput
+                  style={[styles.item, styles.itemInput]}
+                  value={editedIb}
+                  placeholder="Set Initial Budget"
+                  keyboardType={'number-pad'}
+                  onChangeText={value => setEditedIb(value)}
+                />
+                <AntDesign
+                  name="checkcircle"
+                  size={24}
+                  color="green"
+                  onPress={() => {
+                    handleSaveIb();
+                  }}
+                />
+              </View>
+            )}
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Target Date</Text>
+            <View style={[styles.row, styles.item]}>
+              <Text style={styles.item}>
+                {dayjs(editedTargetDate).format('MMMM DD, YYYY')}
+              </Text>
+            </View>
+            <Feather
+              name="edit"
+              size={24}
+              color="black"
+              onPress={() => {
+                setTargetDateOnEdit(!targetDateOnEdit);
+                // setEditedTargetDate(dayjs(targetDate));
+              }}
+            />
+          </View>
+          {targetDateOnEdit && (
+            <DateTimePicker
+              value={editedTargetDate}
+              onValueChange={(date: any) => {
+                handleSaveTargetDate(date);
+                setTargetDateOnEdit(false);
+              }}
+              mode="date"
+            />
+          )}
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>
+              Overall Budget: {overAllBudget || 0}
+            </Text>
+          </View>
+        </View>
 
-          {/**Scheduled Funds & total budget info */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainerHeader}>
-              <Text style={styles.text}>Scheduled Funds Information</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Total Incoming Budget: {totalSf}</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>Total Received: {totalReceivedSf}</Text>
-            </View>
+        {/**Debts Information */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainerHeader}>
+            <Text style={styles.text}>Debts Information</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total Debts: {totalDebts}</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total Paid Debts: {totalPaidDebts}</Text>
+          </View>
+          {totalPaidDebts > 0 ? (
             <View style={styles.itemContainer}>
               <Text style={styles.item}>
-                Total remaining: {totalRemainingSf}
+                Debts Remaining: {totalDebtsRemaining}
               </Text>
             </View>
-          </View>
+          ) : (
+            ''
+          )}
+        </View>
 
-          {/**planned expenses info */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainerHeader}>
-              <Text style={styles.text}>Planned Expenses</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Total Planned Daily Budget: {totalPlannedBudget || 0}
-              </Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Actual Spent: {calculateTotalAmountFromLogs || 0}
-              </Text>
-            </View>
+        {/**Bills Information */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainerHeader}>
+            <Text style={styles.text}>Bills Information</Text>
           </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total Bills: {totalBills}</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total Paid Bills: {totalPaidBills}</Text>
+          </View>
+          {totalBills > 0 && totalPaidBills > 0 ? (
+            <View style={styles.itemContainer}>
+              <Text style={styles.item}>
+                Remaining Bills: {totalRemainingBills}
+              </Text>
+            </View>
+          ) : (
+            ''
+          )}
+        </View>
 
-          {/**remaining budget info */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainerHeader}>
-              <Text style={styles.text}>Remaining Budget Information</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>With Scheduled Funds: {budgetWSf}</Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                With out Scheduled Funds: {budgetWOSf}
-              </Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>On hand: {cash}</Text>
-            </View>
+        {/**Scheduled Funds & total budget info */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainerHeader}>
+            <Text style={styles.text}>Scheduled Funds Information</Text>
           </View>
-          {/**daily budget info */}
-          <View style={styles.planInfoContainer}>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Daily Budget with Scheduled Funds: {dailyBudgetWSf}
-              </Text>
-            </View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.item}>
-                Daily Budget with out Scheduled Funds: {dailyBudgetWOSf}
-              </Text>
-            </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total Incoming Budget: {totalSf}</Text>
           </View>
-        </Pressable>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total Received: {totalReceivedSf}</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Total remaining: {totalRemainingSf}</Text>
+          </View>
+        </View>
+
+        {/**planned expenses info */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainerHeader}>
+            <Text style={styles.text}>Planned Expenses</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>
+              Total Planned Daily Budget: {totalPlannedBudget || 0}
+            </Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>
+              Actual Spent: {calculateTotalAmountFromLogs || 0}
+            </Text>
+          </View>
+        </View>
+
+        {/**remaining budget info */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainerHeader}>
+            <Text style={styles.text}>Remaining Budget Information</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>With Scheduled Funds: {budgetWSf}</Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>
+              With out Scheduled Funds: {budgetWOSf}
+            </Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>On hand: {cash}</Text>
+          </View>
+        </View>
+        {/**daily budget info */}
+        <View style={styles.planInfoContainer}>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>
+              Daily Budget with Scheduled Funds: {dailyBudgetWSf}
+            </Text>
+          </View>
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>
+              Daily Budget with out Scheduled Funds: {dailyBudgetWOSf}
+            </Text>
+          </View>
+        </View>
       </ScrollView>
+      {/* </Pressable> */}
     </SafeAreaView>
   );
 }
@@ -683,6 +677,7 @@ const styles = StyleSheet.create({
   },
   itemInput: {
     color: 'gray',
+    height: 30,
   },
   itemInputContainer: {
     borderWidth: 1,

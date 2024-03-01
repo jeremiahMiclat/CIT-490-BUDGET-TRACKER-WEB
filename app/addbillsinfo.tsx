@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DCEDC8',
     borderRadius: 10,
   },
-  itemInput: { color: '#003300' },
+  itemInput: { color: '#003300', height: 30 },
   subtmitBtn: {
     alignSelf: 'center',
     padding: 20,

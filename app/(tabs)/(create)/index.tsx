@@ -222,7 +222,7 @@ export default function CreatePlan() {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
-                    style={styles.text}
+                    style={[styles.text, styles.textInput]}
                   />
                 )}
                 name="planName"
@@ -250,7 +250,7 @@ export default function CreatePlan() {
                     value={value}
                     numberOfLines={3}
                     textAlignVertical="top"
-                    style={styles.text}
+                    style={[styles.text, styles.textInput]}
                   />
                 )}
                 name="description"
@@ -271,7 +271,7 @@ export default function CreatePlan() {
                     onChangeText={onChange}
                     value={value}
                     keyboardType={'number-pad'}
-                    style={styles.text}
+                    style={[styles.text, styles.textInput]}
                   />
                 )}
                 name="initialBudget"
@@ -325,5 +325,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#003300',
+  },
+  textInput: {
+    height: 30,
   },
 });

@@ -123,7 +123,7 @@ export default function AddPlannedLogsScreen() {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                style={styles.text}
+                style={[styles.text, styles.textInput]}
               />
             )}
             name="notes"
@@ -139,7 +139,7 @@ export default function AddPlannedLogsScreen() {
                 onChangeText={onChange}
                 value={value}
                 keyboardType={'number-pad'}
-                style={styles.text}
+                style={[styles.text, styles.textInput]}
               />
             )}
             name="amount"
@@ -210,5 +210,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#003300',
+  },
+  textInput: {
+    height: 30,
   },
 });

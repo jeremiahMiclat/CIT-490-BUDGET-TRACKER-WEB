@@ -141,7 +141,13 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="websignin" options={{ presentation: 'modal' }} />
+        <Stack.Screen
+          name="websignin"
+          options={{
+            presentation: 'modal',
+            title: 'Google Account and Cloud Storage',
+          }}
+        />
         <Stack.Screen
           name="adddebtinfo"
           options={{ presentation: 'modal', title: 'Add Debt Information' }}

@@ -191,7 +191,7 @@ export default function BillsInfoScreen() {
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
-                        style={styles.text}
+                        style={[styles.text, styles.textInput]}
                       />
                     )}
                     name={`billsInfo[${index}].description`}
@@ -239,7 +239,7 @@ export default function BillsInfoScreen() {
                         onChangeText={onChange}
                         value={value}
                         keyboardType={'number-pad'}
-                        style={styles.text}
+                        style={[styles.text, styles.textInput]}
                       />
                     )}
                     name={`billsInfo[${index}].amount`}
@@ -384,5 +384,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#003300',
+  },
+  textInput: {
+    height: 30,
   },
 });

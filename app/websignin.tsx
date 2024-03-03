@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { FlatList, Pressable, StyleSheet } from 'react-native';
 import { Text, View } from '../components/Themed';
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-native';
@@ -10,58 +10,87 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, counterSlice } from './_layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { useFocusEffect } from 'expo-router';
+import GoogleButton from 'react-google-button';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function SignInScreen() {
   const userData = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const localData = useSelector((state: RootState) => state.data);
   const [loading, setLoading] = useState(false);
-  const [dataFetched, setDataFetched] = useState(false);
+  const [dataFetched, setDataFetched] = useState(true);
+  const flData = userData.existingData;
+  const userProfile = userData.userProfile;
+  const isLogged = userData.isLoggedIn;
   const saveData = async (data: string) => {
     await AsyncStorage.setItem('btData', data);
     setDataFetched(true);
   };
+  const [cloudData, setCloudData] = useState({} || undefined);
+
   useEffect(() => {
     saveData(JSON.stringify(localData));
   }, [localData, dataFetched]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setLoading(true);
-      const fetchInitialData = async () => {
-        try {
-          if (userData && userData.id && !dataFetched) {
-            const docRef = doc(db, 'Users', userData.id);
-            const docSnap = await getDoc(docRef);
-            const cloudUserData = docSnap.data();
-            const transformedData = Object.entries(cloudUserData as {}).map(
-              ([fieldName, value]) => ({
-                fieldName,
-                value,
-              })
-            );
-            console.log('transformedData', transformedData);
-            let newUserData = {
-              isLoggedIn: true,
-              id: userData.id,
-              existingData: transformedData as [],
-              userProfile: userData.userProfile,
-            };
-            dispatch(counterSlice.actions.updateUser(newUserData));
-            setDataFetched(true); // Mark data as fetched
-          }
-        } catch (error) {
-          // Handle error
-        } finally {
-          setLoading(false);
-        }
-      };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     setLoading(true);
+  //     const fetchInitialData = async () => {
+  //       try {
+  //         if (userData && userData.id && !dataFetched) {
+  //           const docRef = doc(db, 'Users', userData.id);
+  //           const docSnap = await getDoc(docRef);
+  //           console.log('doc snap', docSnap);
+  //           const cloudUserData = docSnap.data();
+  //           console.log('cloud data', cloudUserData);
+  //           console.log('id', userData.id);
+  //           const transformedData = Object.entries(cloudUserData as {}).map(
+  //             ([fieldName, value]) => ({
+  //               fieldName,
+  //               value,
+  //             })
+  //           );
 
-      fetchInitialData();
-    }, [userData, dataFetched])
-  );
+  //           let newUserData = {
+  //             isLoggedIn: true,
+  //             id: userData.id,
+  //             existingData: transformedData as [],
+  //             userProfile: userData.userProfile,
+  //           };
+  //           dispatch(counterSlice.actions.updateUser(newUserData));
+  //           setDataFetched(true); // Mark data as fetched
+  //         }
+  //       } catch (error) {
+  //         // Handle error
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+
+  //     fetchInitialData();
+  //   }, [dataFetched])
+  // );
+
+  useEffect(() => {
+    if (userData.isLoggedIn) {
+      const unsub = onSnapshot(doc(db, 'Users', (userData as any).id), doc => {
+        const source = doc.metadata.hasPendingWrites ? 'Local' : 'Server';
+        console.log(source, ' data: ', doc.data());
+        const transformedData = Object.entries(doc.data() as {}).map(
+          ([fieldName, value]) => ({
+            fieldName,
+            value,
+          })
+        );
+        setCloudData(transformedData);
+      });
+
+      console.log('unsub', cloudData);
+    }
+    setDataFetched(true);
+  }, [dataFetched]);
 
   async function signIn() {
     if (userData.isLoggedIn) {
@@ -73,10 +102,7 @@ export default function SignInScreen() {
     try {
       if (auth && provider) {
         const result = await signInWithPopup(auth, provider);
-        // The signed-in user info.
         user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
         const uid = (user as any).auth.currentUser.uid;
         const displayName = (user as any).auth.currentUser.displayName;
         if (displayName != undefined && uid != undefined) {
@@ -131,31 +157,56 @@ export default function SignInScreen() {
   }
 
   async function handleSignOut() {
-    signOut(auth)
-      .then(async () => {
-        const newUserData = {
-          isLoggedIn: false,
-          id: null,
-          existingData: [{ fieldName: 'no data' }],
-        };
-        dispatch(counterSlice.actions.updateUser(newUserData));
-        const jsonValue = JSON.stringify(newUserData);
-        await AsyncStorage.setItem('user', jsonValue);
-        console.log('successful signout');
-      })
-      .catch(error => {
-        console.log('error signout');
-      });
+    try {
+      signOut(auth)
+        .then(async () => {
+          setCloudData(undefined);
+          const newUserData = {
+            isLoggedIn: false,
+            id: null,
+            existingData: [{ fieldName: 'no data' }],
+          };
+          dispatch(counterSlice.actions.updateUser(newUserData));
+          const jsonValue = JSON.stringify(newUserData);
+          await AsyncStorage.setItem('user', jsonValue);
+          console.log('successful signout');
+        })
+        .catch(error => {
+          console.log('error signout');
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+  const renderCloudData = ({ item }: any) =>
+    userData.isLoggedIn ? (
+      <View>
+        <Text>{item.fieldName}</Text>
+      </View>
+    ) : (
+      <View />
+    );
 
   return (
     <View>
-      <Pressable onPress={signIn}>
-        <Text>Sign In</Text>
-      </Pressable>
-      <Pressable onPress={handleSignOut}>
-        <Text>Sign Out</Text>
-      </Pressable>
+      {userData.isLoggedIn ? (
+        <View>
+          <Text>Hello {(userProfile as any).displayName}</Text>
+          <Pressable onPress={handleSignOut}>
+            <Text>Sign Out</Text>
+            <FontAwesome name="sign-out" size={24} color="#DCEDC8" />
+          </Pressable>
+        </View>
+      ) : (
+        <GoogleButton onClick={signIn} />
+      )}
+
+      <FlatList
+        data={cloudData as any}
+        renderItem={renderCloudData}
+        keyExtractor={item => item.fieldName}
+      />
     </View>
   );
 }

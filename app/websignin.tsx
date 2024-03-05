@@ -1,5 +1,4 @@
-import { FlatList, Pressable, StyleSheet } from 'react-native';
-import { Text, View } from '../components/Themed';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-native';
 // import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
@@ -10,10 +9,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, counterSlice } from './_layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
-import { useFocusEffect } from 'expo-router';
+import {
+  deleteField,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import { useFocusEffect, useRouter } from 'expo-router';
 import GoogleButton from 'react-google-button';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
 export default function SignInScreen() {
   const userData = useSelector((state: RootState) => state.user);
@@ -156,6 +162,33 @@ export default function SignInScreen() {
     }
   }
 
+  const router = useRouter();
+  const setLocalData = async (item: any) => {
+    setLoading(true);
+    try {
+      const newValue = JSON.parse(item.value);
+      const newData = {
+        identifier:
+          'From cloud (' + dayjs().format('MMMM D, YYYY h:mm:ss A') + ')',
+        value: newValue.value,
+      };
+      const startTime = Date.now();
+
+      dispatch(counterSlice.actions.updateData(newData));
+
+      const timeElapsed = Date.now() - startTime;
+
+      if (timeElapsed < 1000) {
+        await new Promise(resolve => setTimeout(resolve, 1000 - timeElapsed));
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      router.replace('/');
+    }
+  };
+
   async function handleSignOut() {
     try {
       signOut(auth)
@@ -179,34 +212,82 @@ export default function SignInScreen() {
     }
   }
 
+  const deleteCloudData = async (itemToDelete: any) => {
+    const collectionName = 'Users';
+    const documentId = userData.id as unknown as string;
+    const fieldName = itemToDelete.fieldName;
+
+    if (userData.isLoggedIn) {
+      try {
+        const documentRef = doc(db, 'Users', documentId);
+
+        // Use update method to remove the field
+        await updateDoc(documentRef, {
+          [fieldName]: deleteField(),
+        });
+        setDataFetched(false);
+        console.log('Field deleted successfully.');
+      } catch (error) {
+        console.error('Error deleting field:', error);
+      }
+    }
+  };
+
   const renderCloudData = ({ item }: any) =>
     userData.isLoggedIn ? (
-      <View>
-        <Text>{item.fieldName}</Text>
+      <View style={styles.itemContainer}>
+        <View style={styles.itemWrapper}>
+          <Pressable
+            style={styles.flPressable}
+            onPress={() => setLocalData(item)}
+          >
+            <Text style={styles.flatListItemText}>{item.fieldName}</Text>
+          </Pressable>
+          <Pressable
+            style={styles.flPressable}
+            onPress={() => deleteCloudData(item)}
+          >
+            <MaterialIcons
+              name="delete"
+              size={24}
+              color="#537B2F"
+              style={styles.delBtn}
+            />
+          </Pressable>
+        </View>
       </View>
     ) : (
       <View />
     );
 
   return (
-    <View>
+    <View style={styles.safeAreaView}>
       {userData.isLoggedIn ? (
-        <View>
-          <Text>Hello {(userProfile as any).displayName}</Text>
-          <Pressable onPress={handleSignOut}>
-            <Text>Sign Out</Text>
-            <FontAwesome name="sign-out" size={24} color="#DCEDC8" />
-          </Pressable>
+        <View style={styles.container}>
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.welcomeText}>
+              Hello {(userProfile as any).displayName}
+            </Text>
+            <Pressable onPress={handleSignOut} style={styles.signOutBtn}>
+              <Text style={styles.signOutBtnText}>Sign Out</Text>
+              <FontAwesome name="sign-out" size={24} color="#DCEDC8" />
+            </Pressable>
+          </View>
+
+          <View style={styles.flatListContainer}>
+            <Text style={styles.flatListContainerHeader}>
+              Click to Load Saved Data:{' '}
+            </Text>
+            <FlatList
+              data={cloudData as any}
+              renderItem={renderCloudData}
+              keyExtractor={item => item.fieldName}
+            />
+          </View>
         </View>
       ) : (
         <GoogleButton onClick={signIn} />
       )}
-
-      <FlatList
-        data={cloudData as any}
-        renderItem={renderCloudData}
-        keyExtractor={item => item.fieldName}
-      />
     </View>
   );
 }
@@ -214,8 +295,6 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
@@ -225,5 +304,55 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: '80%',
+  },
+  safeAreaView: {
+    backgroundColor: '#8DA750',
+    flex: 1,
+  },
+  welcomeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    margin: 20,
+  },
+  welcomeText: {
+    color: '#DCEDC8',
+    marginLeft: 10,
+    fontSize: 20,
+  },
+  signOutBtn: {
+    alignSelf: 'center',
+    marginRight: 10,
+    flexDirection: 'row',
+  },
+  signOutBtnText: { color: '#DCEDC8', marginRight: 10 },
+  flatListContainer: {
+    borderRadius: 10,
+    backgroundColor: '#DCEDC8',
+    padding: 10,
+    margin: 10,
+    flex: 1,
+  },
+  flatListContainerHeader: {
+    color: '#003300',
+    alignSelf: 'center',
+    padding: 10,
+  },
+  flPressable: {
+    padding: 20,
+  },
+  itemContainer: {
+    justifyContent: 'space-between',
+    margin: 5,
+  },
+  itemWrapper: {
+    backgroundColor: '#eaf7da',
+  },
+  flatListItemText: {
+    fontSize: 12,
+    color: '#003300',
+  },
+  delBtn: {
+    alignSelf: 'center',
   },
 });

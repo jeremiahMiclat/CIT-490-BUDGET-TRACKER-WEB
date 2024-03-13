@@ -10,6 +10,11 @@ import { RootState } from '../_layout';
 import { Entypo } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: 'index',
+};
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const itemOnView = useSelector((state: RootState) => state.viewing) || 'Info';

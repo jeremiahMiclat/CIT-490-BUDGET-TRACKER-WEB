@@ -19,10 +19,10 @@ import { RootState, counterSlice } from '../_layout';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useNavigation, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { uploadToFirestore } from '../../functions/androidAutoUpload';
 import dayjs from 'dayjs';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { uploadToFirestore } from '../../functions/webAutoUpload';
 
 type RootStackParamList = {
   Home: undefined;
@@ -99,17 +99,13 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
-    // try {
-    //   if (
-    //     Platform.OS === 'android' &&
-    //     user.isLoggedIn &&
-    //     data.value.length > 0
-    //   ) {
-    //     uploadToFirestore(data, user);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      if (user.isLoggedIn && data.value.length > 0) {
+        uploadToFirestore(data, user);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }, [data]);
 
   const isMounted = useRef(false);

@@ -44,3 +44,6 @@ The app seamlessly functions without an internet connection for users who choose
 Secure Data Storage: 
 Integration with Firebase ensures secure storage and retrieval of user data, prioritizing the privacy and security of users' financial information.
 
+
+Web App Deployment: https://main--cit-490-budget-tracker-web.netlify.app
+
